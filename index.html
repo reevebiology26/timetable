@@ -496,14 +496,14 @@
         /* Print Media Query */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
-            @page { size: A4 landscape; margin: 6mm; }
+            @page { size: A4 landscape; margin: 5mm; }
             
             html, body { 
-                height: 100% !important; 
+                height: 100vh !important; 
                 width: 100% !important; 
                 margin: 0 !important; 
                 padding: 0 !important; 
-                overflow: hidden;
+                overflow: hidden !important; /* STRICT lock to prevent second page */
             }
 
             body { 
@@ -517,22 +517,24 @@
             
             .container { 
                 padding: 0; margin: 0; max-width: 100%; 
-                height: 100%; 
+                height: 100vh !important; 
                 display: flex; flex-direction: column; 
                 flex-grow: 1;
             }
             
             .workspace { 
                 display: flex; flex-direction: column; 
-                flex-grow: 1; height: 100%;
+                flex-grow: 1; 
+                min-height: 0;
             }
 
             #current-week-wrapper {
                 display: flex; flex-direction: column; 
-                flex-grow: 1; height: 100%;
+                flex-grow: 1; 
+                min-height: 0;
             }
 
-            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 1.4rem; font-weight: bold; margin-bottom: 6px; flex-shrink: 0;}
+            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 1.3rem; font-weight: bold; margin-bottom: 4px; flex-shrink: 0;}
             
             .screen-only { display: none !important; }
             .print-only { display: block !important; }
@@ -540,19 +542,19 @@
             .timetable { 
                 grid-template-columns: 70px repeat(5, 1fr) !important; 
                 grid-template-rows: min-content min-content repeat(4, 1fr) !important;
-                gap: 3px; 
+                gap: 2px; 
                 flex-grow: 1;
                 height: 100% !important;
                 display: grid !important;
             }
 
-            .header-cell { padding: 4px; font-size: 1.2rem !important; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
-            .day-col { min-height: auto; padding: 4px 0; font-size: 1.2rem !important; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
+            .header-cell { padding: 2px; font-size: 1.1rem !important; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
+            .day-col { min-height: auto; padding: 2px 0; font-size: 1.1rem !important; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
             
             .monday-row { 
                 display: flex !important; 
                 height: 100% !important; 
-                padding: 4px !important; 
+                padding: 2px !important; 
                 align-items: center; 
                 justify-content: center; 
                 border: 1px solid #000 !important;
@@ -560,21 +562,28 @@
             }
 
             .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100%;}
-            .cell-header { border-bottom: 1px solid #000 !important; padding: 4px; font-size: 1.1rem !important; font-weight: bold; }
-            .cell-body { padding: 4px; gap: 2px; flex-grow: 1; height: 100%;}
+            .cell-header { border-bottom: 1px solid #000 !important; padding: 2px 4px; font-size: 1rem !important; font-weight: bold; }
+            .cell-body { padding: 2px 4px; gap: 2px; flex-grow: 1; height: 100%;}
 
             .cell textarea { display: none !important; } 
             
-            .cell select, .cell input { font-size: 1.1rem !important; font-weight: bold !important; padding: 0; margin: 0; height: auto; border: none !important; background: transparent !important; color: black !important; -webkit-appearance: none; appearance: none; }
+            .cell select, .cell input { font-size: 1rem !important; font-weight: bold !important; padding: 0; margin: 0; height: auto; border: none !important; background: transparent !important; color: black !important; -webkit-appearance: none; appearance: none; }
             
-            .markdown-preview { padding: 0 !important; font-size: 1.3rem !important; line-height: 1.1 !important; color: #dc3545 !important; height: auto !important; min-height: 25px; overflow: hidden; flex-grow: 1;}
-            .ppa-textarea { padding: 2px !important; font-size: 1.3rem !important; min-height: 25px; border: none; background: transparent; overflow: hidden; line-height: 1.1 !important; color: #dc3545 !important; flex-grow: 1;}
+            .markdown-preview { padding: 0 !important; font-size: 1.1rem !important; line-height: 1 !important; color: #dc3545 !important; height: auto !important; min-height: 20px; overflow: hidden; flex-grow: 1;}
+            .ppa-textarea { padding: 2px !important; font-size: 1.1rem !important; min-height: 20px; border: none; background: transparent; overflow: hidden; line-height: 1 !important; color: #dc3545 !important; flex-grow: 1;}
             
-            .task-boxes-container { display: flex !important; gap: 6px !important; margin-top: 5px !important; flex: 0 0 3cm !important; height: 3cm !important; }
+            .task-boxes-container { 
+                display: flex !important; 
+                gap: 4px !important; 
+                margin-top: 4px !important; 
+                flex: 0 0 2.5cm !important; /* Forces strict height */
+                height: 2.5cm !important; 
+                overflow: hidden !important; /* PREVENTS extending to a second page */
+            }
             .task-box { padding: 4px !important; border: 1px solid #000 !important; border-radius: 4px !important; box-shadow: none !important; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
             .task-header { font-size: 1.1rem !important; margin-bottom: 2px !important; padding-bottom: 2px !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
             .task-list { min-height: 0 !important; max-height: none !important; gap: 1px !important; flex-grow: 1;}
-            .task-item { padding: 1px !important; border: none !important; background: transparent !important; font-size: 1.2rem !important; margin-bottom: 0 !important; line-height: 1.1 !important; color: #dc3545 !important; }
+            .task-item { padding: 1px !important; border: none !important; background: transparent !important; font-size: 1.2rem !important; margin-bottom: 0 !important; line-height: 1 !important; color: #dc3545 !important; }
             .task-item-text { font-size: 1.2rem !important; }
             .task-input, .del-task { display: none !important; }
         }
@@ -1210,9 +1219,9 @@
                             /* Updated Monday print format: Single line, Caveat font */
                             cell.innerHTML = `
                                 <span class="screen-only">Non-Working Day</span>
-                                <div class="print-only" style="text-align: center; padding: 2px; width: 100%;">
-                                    <span style="font-family: 'Caveat', cursive; color: black; font-weight: 700; font-size: 1.3rem;">Andy's Monday motivation - </span>
-                                    <span style="font-family: 'Caveat', cursive; color: #dc3545; font-weight: 700; font-size: 1.3rem;">"${currentQuote}"</span>
+                                <div class="print-only" style="text-align: center; padding: 2px; width: 100%; white-space: nowrap; overflow: hidden;">
+                                    <span style="font-family: 'Caveat', cursive; color: black; font-weight: 700; font-size: 1.2rem;">Andy's Monday motivation - </span>
+                                    <span style="font-family: 'Caveat', cursive; color: #dc3545; font-weight: 700; font-size: 1.2rem;">"${currentQuote}"</span>
                                 </div>
                             `;
                             grid.appendChild(cell);
