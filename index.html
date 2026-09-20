@@ -498,51 +498,55 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             body { padding: 0; background: white; margin: 0;}
             .controls, #prev-week-wrapper, .date-picker { display: none !important; }
-            header { box-shadow: none; padding: 0; margin-bottom: 2px; background: transparent; }
-            .header-left h1 { font-size: 1.1rem; margin: 0; padding: 0; }
+            header { box-shadow: none; padding: 0; margin-bottom: 5px; background: transparent; }
+            .header-left h1 { font-size: 1.4rem; margin: 0; padding: 0; }
             .container { max-width: 100%; padding: 0; margin: 0; }
             .workspace { display: block; }
-            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 0.9rem; }
+            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 1.1rem; margin-bottom: 6px; }
             
             .screen-only { display: none !important; }
             .print-only { display: block !important; }
 
-            /* Highly compact grid */
-            .timetable { grid-template-columns: 50px repeat(5, 1fr); gap: 1px; }
+            /* Balanced grid for readability */
+            .timetable { grid-template-columns: 70px repeat(5, 1fr); gap: 3px; }
 
-            .header-cell { padding: 1px; font-size: 0.65rem; border: 1px solid #000 !important; }
-            .day-col { min-height: auto; padding: 1px 0; font-size: 0.65rem; border: 1px solid #000 !important; }
+            .header-cell { padding: 4px; font-size: 0.9rem; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
+            .day-col { min-height: auto; padding: 4px 0; font-size: 0.9rem; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
             
             /* Print Monday Quote nicely */
             .monday-row { 
                 display: flex !important; 
-                min-height: 25px !important; 
-                height: 25px !important; 
+                min-height: 35px !important; 
+                height: 35px !important; 
                 padding: 0 !important; 
                 align-items: center; 
                 justify-content: center; 
                 border: 1px solid #000 !important;
             }
+            .monday-row .print-only { font-size: 1.3rem !important; }
 
             .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; }
-            .cell-header { border-bottom: 1px solid #000 !important; padding: 0px 2px; font-size: 0.55rem; }
-            .cell-body { padding: 1px; gap: 0px; }
+            .cell-header { border-bottom: 1px solid #000 !important; padding: 2px 4px; font-size: 0.8rem; font-weight: bold; }
+            .cell-body { padding: 4px; gap: 2px; }
 
-            .cell textarea { height: 16px; font-size: 0.6rem; padding: 0; margin: 0; }
-            .cell select { font-size: 0.55rem; padding: 0; height: 12px; margin: 0; }
-            .ppa-textarea { padding: 1px; font-size: 0.6rem; }
-            .cell input, .cell textarea, .cell select, .ppa-textarea { border: none; background: transparent; }
+            .cell textarea { display: none !important; } /* Only print markdown preview */
             
-            /* Print Task Boxes Compactly */
-            .task-boxes-container { display: flex !important; gap: 3px !important; margin-top: 3px !important; page-break-inside: avoid; }
-            .task-box { padding: 2px !important; border: 1px solid #000 !important; border-radius: 0 !important; box-shadow: none !important; }
-            .task-header { font-size: 0.65rem !important; margin-bottom: 1px !important; padding-bottom: 1px !important; border-bottom: 1px solid #000 !important; }
-            .task-list { min-height: 0 !important; max-height: none !important; gap: 1px !important; }
-            .task-item { padding: 0 !important; border: none !important; background: transparent !important; font-size: 0.7rem !important; margin-bottom: 0 !important; line-height: 1 !important; color: #dc3545 !important; }
+            /* Ensure dropdown/topic fields print nicely */
+            .cell select, .cell input { font-size: 0.85rem !important; font-weight: bold !important; padding: 0; margin: 0; height: auto; border: none !important; background: transparent !important; color: black !important; -webkit-appearance: none; appearance: none; }
+            
+            /* Allow preview boxes to fill space */
+            .markdown-preview { padding: 0 !important; font-size: 1rem !important; line-height: 1.2 !important; color: #dc3545 !important; height: auto !important; min-height: 50px; overflow: hidden; }
+            .ppa-textarea { padding: 4px !important; font-size: 1rem !important; min-height: 60px; border: none; background: transparent; overflow: hidden; }
+            
+            /* Print Task Boxes readable size */
+            .task-boxes-container { display: flex !important; gap: 8px !important; margin-top: 10px !important; page-break-inside: avoid; }
+            .task-box { padding: 8px !important; border: 1px solid #000 !important; border-radius: 4px !important; box-shadow: none !important; flex: 1; }
+            .task-header { font-size: 1rem !important; margin-bottom: 4px !important; padding-bottom: 2px !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
+            .task-list { min-height: 0 !important; max-height: none !important; gap: 2px !important; }
+            .task-item { padding: 1px !important; border: none !important; background: transparent !important; font-size: 1.1rem !important; margin-bottom: 0 !important; line-height: 1.1 !important; color: #dc3545 !important; }
             .task-input, .del-task { display: none !important; }
-            .markdown-preview { padding: 0 !important; font-size: 0.65rem !important; line-height: 1 !important; color: #dc3545 !important; height: auto !important; }
             
-            @page { size: landscape; margin: 0.4cm; }
+            @page { size: landscape; margin: 0.5cm; }
         }
     </style>
 </head>
@@ -647,44 +651,44 @@
     const groupsList = ['13BC', '12BD', '12B2', '11XT1', '11X2C', '11YT1', '11Y2C', '10Y3', '9X2C120', '9X2', '8X2', '7Y3', '7Y3C120', '7Y6', '7X2', '7X2 C120', 'Collab'];
 
     const mondayQuotes = [
-        "Teaching is the greatest act of optimism. – Colleen Wilcox",
-        "Science is a way of thinking much more than it is a body of knowledge. – Carl Sagan",
-        "The science technician: the unsung hero of the prep room.",
-        "Education is not the filling of a pail, but the lighting of a fire. – W.B. Yeats",
-        "Every brilliant experiment begins with a well-prepped lab.",
-        "Teachers plant seeds of knowledge that grow forever.",
-        "Somewhere, something incredible is waiting to be known. – Carl Sagan",
-        "A good teacher can inspire hope, ignite the imagination, and instill a love of learning.",
-        "Behind every great science lesson is a technician who found the missing equipment.",
-        "The important thing is to not stop questioning. – Albert Einstein",
-        "Science technicians: making the magic happen behind the scenes.",
-        "Teaching is the one profession that creates all other professions.",
-        "Equipped with his five senses, man explores the universe around him and calls the adventure Science.",
-        "A technician's prep room is the engine room of the science department.",
-        "The beautiful thing about learning is that no one can take it away from you. – B.B. King",
-        "Nothing in life is to be feared, it is only to be understood. – Marie Curie",
-        "The best teachers teach from the heart, not from the book.",
-        "We are all scientists. We are all born with a sense of wonder.",
-        "Science is magic that works. – Kurt Vonnegut",
-        "Without science technicians, science teachers would just be talking in an empty room.",
-        "I touch the future. I teach. – Christa McAuliffe",
-        "Research is what I'm doing when I don't know what I'm doing. – Wernher von Braun",
-        "A teacher affects eternity; they can never tell where their influence stops.",
-        "To invent, you need a good imagination and a pile of junk. – Thomas Edison",
-        "Science is organized knowledge. Wisdom is organized life. – Immanuel Kant",
-        "The art of teaching is the art of assisting discovery. – Mark Van Doren",
-        "The prep room: where coffee is consumed and miracles are prepped.",
-        "Millions saw the apple fall, but Newton asked why. – Bernard Baruch",
-        "It is the supreme art of the teacher to awaken joy in creative expression and knowledge.",
-        "What we learn with pleasure we never forget. – Alfred Mercier",
-        "Science knows no country, because knowledge belongs to humanity. – Louis Pasteur",
-        "The best preparation for tomorrow is doing your best today.",
-        "Technicians do it with precision (and a lot of patience).",
-        "A person who never made a mistake never tried anything new. – Albert Einstein",
-        "In a world where you can be anything, be a scientist.",
-        "Teachers who love teaching, teach children to love learning.",
-        "The good thing about science is that it's true whether or not you believe in it. – Neil deGrasse Tyson",
-        "End of the year countdown: Keep calm and prep on."
+        "Teaching: the only profession where you steal supplies from home to bring to work.",
+        "I'm a teacher. What's your superpower? (Besides going to the bathroom whenever you want).",
+        "Yes, I am a teacher. No, I will not fix your computer.",
+        "I didn't lose my mind. I just sold it online for school supplies.",
+        "My classroom is a place of joy, learning, and finding out who threw that eraser.",
+        "Those who can, do. Those who understand, teach. Those who can't, complain about teachers.",
+        "I survive on coffee, dry shampoo, and the sheer willpower to make it to Friday.",
+        "Teaching is basically just repeating yourself until someone cries. Sometimes it's the students.",
+        "I ask 'Does that make sense?' knowing full well it does not.",
+        "The bell doesn't dismiss you, I do. (But secretly I want you to leave more than you do).",
+        "Science teachers: We have all the solutions. Literally. They are in the prep room.",
+        "A lesson plan is just a list of things that won't happen today.",
+        "If you think education is expensive, try ignorance. Or just look at my salary.",
+        "I'm a teacher, not a wizard. Though I do make supplies disappear.",
+        "To save time, let's just assume I'm never wrong about Biology.",
+        "I'm sorry for what I said when I was grading papers at 11 PM.",
+        "The best part of teaching is the 'Aha!' moment. The worst part is the other 55 minutes.",
+        "We do Science here. You must be confusing me with someone who cares about your excuses.",
+        "Of course I talk to myself. I'm a teacher, I need expert advice.",
+        "My favorite classroom management strategy is 'the stare'.",
+        "I'm not bossy. I just know exactly what you should be doing.",
+        "You know you're a teacher when you evaluate strangers' behavior on a rubric.",
+        "A balanced diet for a teacher is a coffee in each hand.",
+        "I teach Biology. Which means I know how to dispose of a body. Don't test me.",
+        "I have 99 problems and 98 of them are grading.",
+        "I love teaching. It's the marking, meetings, and mornings I could do without.",
+        "Teaching: It's like riding a bike. Except the bike is on fire, and you're in hell.",
+        "Yes, I am a teacher. Please do not ask me to 'babysit' your child.",
+        "I'm only one cup of coffee away from being a highly effective educator.",
+        "Student: 'Did I miss anything important?' Me: 'No, we just waited for you.'",
+        "A day without coffee is like... just kidding, I have no idea.",
+        "If you can read this, thank a teacher. If you can read the genetic code, thank a biology teacher.",
+        "Teaching is a walk in the park. If that park is Jurassic Park.",
+        "I became a science teacher because my Hogwarts letter never arrived.",
+        "I'm not arguing, I'm just explaining why I'm scientifically correct.",
+        "May your coffee be strong and your students be calm.",
+        "I teach. What's your excuse for being this tired?",
+        "Keep calm and pretend it's on the lesson plan."
     ];
 
     const scheduleA = {
@@ -1169,9 +1173,14 @@
 
                             cell.innerHTML = `
                                 <span class="screen-only">Non-Working Day</span>
-                                <span class="print-only" style="font-family: 'Caveat', cursive; font-size: 1.1rem; color: #2c3e50;">
-                                    "${currentQuote}"
-                                </span>
+                                <div class="print-only" style="text-align: center;">
+                                    <div style="font-family: -apple-system, sans-serif; color: black; font-size: 1.1rem; text-decoration: underline; margin-bottom: 5px; font-weight: bold;">
+                                        Andy's helpful motivational quote of the week- as i am not in until Tuesday!
+                                    </div>
+                                    <div style="font-family: 'Caveat', cursive; font-size: 1.4rem; color: #dc3545; font-weight: 700;">
+                                        "${currentQuote}"
+                                    </div>
+                                </div>
                             `;
                             grid.appendChild(cell);
                         }
@@ -1351,7 +1360,9 @@
                         detailsContainer.appendChild(previewDiv);
                         detailsContainer.appendChild(detailsInput);
                         
-                        cellBody.appendChild(topicContainer);
+                        if (cLower !== 'collab') {
+                            cellBody.appendChild(topicContainer);
+                        }
                         cellBody.appendChild(detailsContainer);
                         
                         cell.appendChild(cellHeader);
