@@ -539,7 +539,7 @@
 
             .timetable { 
                 grid-template-columns: 70px repeat(5, 1fr) !important; 
-                grid-template-rows: auto repeat(5, 1fr) !important;
+                grid-template-rows: min-content min-content repeat(4, 1fr) !important;
                 gap: 3px; 
                 flex-grow: 1;
                 height: 100% !important;
@@ -552,14 +552,15 @@
             .monday-row { 
                 display: flex !important; 
                 height: 100% !important; 
-                padding: 0 !important; 
+                padding: 8px !important; 
                 align-items: center; 
                 justify-content: center; 
                 border: 1px solid #000 !important;
+                box-sizing: border-box !important;
             }
             
-            .monday-row-title { font-size: 1.4rem !important; margin-bottom: 5px !important; }
-            .monday-quote { font-size: 1.8rem !important; }
+            .monday-row-title { font-size: 1.2rem !important; margin-bottom: 6px !important; line-height: 1.2 !important; white-space: normal !important; text-align: center; }
+            .monday-quote { font-size: 1.5rem !important; line-height: 1.2 !important; white-space: normal !important; text-align: center; padding: 0 15px; }
 
             .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100%;}
             .cell-header { border-bottom: 1px solid #000 !important; padding: 4px; font-size: 1.1rem !important; font-weight: bold; }
