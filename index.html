@@ -493,10 +493,10 @@
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px; }
         .btn-clear-note { background-color: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         .modal-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; box-sizing: border-box; }
-
+        /* Print Media Query */
         @media print {
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
-            @page { size: A4 landscape; margin: 8mm; }
+            @page { size: A4 landscape; margin: 6mm; }
             
             html, body { 
                 height: 100% !important; 
@@ -552,15 +552,12 @@
             .monday-row { 
                 display: flex !important; 
                 height: 100% !important; 
-                padding: 8px !important; 
+                padding: 4px !important; 
                 align-items: center; 
                 justify-content: center; 
                 border: 1px solid #000 !important;
                 box-sizing: border-box !important;
             }
-            
-            .monday-row-title { font-size: 1.2rem !important; margin-bottom: 6px !important; line-height: 1.2 !important; white-space: normal !important; text-align: center; }
-            .monday-quote { font-size: 1.5rem !important; line-height: 1.2 !important; white-space: normal !important; text-align: center; padding: 0 15px; }
 
             .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100%;}
             .cell-header { border-bottom: 1px solid #000 !important; padding: 4px; font-size: 1.1rem !important; font-weight: bold; }
@@ -570,15 +567,15 @@
             
             .cell select, .cell input { font-size: 1.1rem !important; font-weight: bold !important; padding: 0; margin: 0; height: auto; border: none !important; background: transparent !important; color: black !important; -webkit-appearance: none; appearance: none; }
             
-            .markdown-preview { padding: 0 !important; font-size: 1.4rem !important; line-height: 1.2 !important; color: #dc3545 !important; height: auto !important; min-height: 30px; overflow: hidden; flex-grow: 1;}
-            .ppa-textarea { padding: 4px !important; font-size: 1.4rem !important; min-height: 40px; border: none; background: transparent; overflow: hidden; line-height: 1.2 !important; color: #dc3545 !important; flex-grow: 1;}
+            .markdown-preview { padding: 0 !important; font-size: 1.3rem !important; line-height: 1.1 !important; color: #dc3545 !important; height: auto !important; min-height: 25px; overflow: hidden; flex-grow: 1;}
+            .ppa-textarea { padding: 2px !important; font-size: 1.3rem !important; min-height: 25px; border: none; background: transparent; overflow: hidden; line-height: 1.1 !important; color: #dc3545 !important; flex-grow: 1;}
             
-            .task-boxes-container { display: flex !important; gap: 8px !important; margin-top: 10px !important; flex: 0 0 4.5cm !important; height: 4.5cm !important; }
-            .task-box { padding: 8px !important; border: 1px solid #000 !important; border-radius: 4px !important; box-shadow: none !important; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-            .task-header { font-size: 1.2rem !important; margin-bottom: 4px !important; padding-bottom: 2px !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
-            .task-list { min-height: 0 !important; max-height: none !important; gap: 2px !important; flex-grow: 1;}
-            .task-item { padding: 2px !important; border: none !important; background: transparent !important; font-size: 1.4rem !important; margin-bottom: 0 !important; line-height: 1.1 !important; color: #dc3545 !important; }
-            .task-item-text { font-size: 1.4rem !important; }
+            .task-boxes-container { display: flex !important; gap: 6px !important; margin-top: 5px !important; flex: 0 0 3cm !important; height: 3cm !important; }
+            .task-box { padding: 4px !important; border: 1px solid #000 !important; border-radius: 4px !important; box-shadow: none !important; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+            .task-header { font-size: 1.1rem !important; margin-bottom: 2px !important; padding-bottom: 2px !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
+            .task-list { min-height: 0 !important; max-height: none !important; gap: 1px !important; flex-grow: 1;}
+            .task-item { padding: 1px !important; border: none !important; background: transparent !important; font-size: 1.2rem !important; margin-bottom: 0 !important; line-height: 1.1 !important; color: #dc3545 !important; }
+            .task-item-text { font-size: 1.2rem !important; }
             .task-input, .del-task { display: none !important; }
         }
     </style>
@@ -588,7 +585,7 @@
 <div class="container">
     <header>
         <div class="header-left">
-            <h1>Mr Reeve's Requisitions</h1>
+            <h1>Mr A Reeve's Requisitions</h1>
             <div class="date-picker">
                 <label for="week-date">Week Commencing:</label>
                 <input type="date" id="week-date" onchange="saveDate(this.value)">
@@ -1059,7 +1056,13 @@
         const badge = document.getElementById('week-type-display');
         badge.innerText = isWeekA ? 'Week A Rotation' : 'Week B Rotation';
         badge.className = `week-badge ${isWeekA ? 'badge-a' : 'badge-b'}`;
-        document.getElementById('week-date').value = plannerData[`W${currentWeek}_date`] || '';
+        
+        const weekDate = plannerData[`W${currentWeek}_date`] || '';
+        document.getElementById('week-date').value = weekDate;
+
+        /* Add title with date to print layout */
+        const dateText = weekDate ? ` (W/C: ${weekDate})` : '';
+        document.getElementById('curr-title').innerText = `Mr A Reeve's Requisitions - Week ${currentWeek}${dateText}`;
 
         renderGrid('timetable-curr', currentWeek, false);
         renderTasks(); 
@@ -1204,15 +1207,12 @@
                             const quoteIndex = (targetWeek - 1) % mondayQuotes.length;
                             const currentQuote = mondayQuotes[quoteIndex];
 
+                            /* Updated Monday print format: Single line, Caveat font */
                             cell.innerHTML = `
                                 <span class="screen-only">Non-Working Day</span>
-                                <div class="print-only" style="text-align: center;">
-                                    <div class="monday-row-title" style="font-family: -apple-system, sans-serif; color: black; text-decoration: underline; margin-bottom: 5px; font-weight: bold;">
-                                        Andy's helpful motivational quote of the week- as i am not in until Tuesday!
-                                    </div>
-                                    <div class="monday-quote" style="font-family: 'Caveat', cursive; color: #dc3545; font-weight: 700;">
-                                        "${currentQuote}"
-                                    </div>
+                                <div class="print-only" style="text-align: center; padding: 2px; width: 100%;">
+                                    <span style="font-family: 'Caveat', cursive; color: black; font-weight: 700; font-size: 1.3rem;">Andy's Monday motivation - </span>
+                                    <span style="font-family: 'Caveat', cursive; color: #dc3545; font-weight: 700; font-size: 1.3rem;">"${currentQuote}"</span>
                                 </div>
                             `;
                             grid.appendChild(cell);
@@ -1519,17 +1519,20 @@
             document.body.appendChild(printContainer);
 
             for (let w = start; w <= end; w++) {
-                const wrapper = document.createElement('div');
-                wrapper.style.pageBreakAfter = (w < end) ? 'always' : 'auto';
-                wrapper.style.marginBottom = '20px';
+            const wrapper = document.createElement('div');
+            wrapper.style.pageBreakAfter = (w < end) ? 'always' : 'auto';
+            wrapper.style.marginBottom = '20px';
+            wrapper.style.height = '100%';
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
 
-                const title = document.createElement('div');
-                title.className = 'grid-title';
-                const weekDate = plannerData[`W${w}_date`] || '';
-                const dateText = weekDate ? ` (W/C: ${weekDate})` : '';
-                title.innerText = `Mr Reeve's Requisitions - Week ${w} - ${w % 2 !== 0 ? 'Week A' : 'Week B'}${dateText}`;
+            const title = document.createElement('div');
+            title.className = 'grid-title';
+            const weekDate = plannerData[`W${w}_date`] || '';
+            const dateText = weekDate ? ` (W/C: ${weekDate})` : '';
+            title.innerText = `Mr A Reeve's Requisitions - Week ${w} - ${w % 2 !== 0 ? 'Week A' : 'Week B'}${dateText}`;
 
-                const gridContainer = document.createElement('div');
+            const gridContainer = document.createElement('div');
                 gridContainer.className = 'timetable';
                 gridContainer.id = `batch-grid-${w}`;
 
