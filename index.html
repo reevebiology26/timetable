@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>38-Week Interactive Lesson Planner (2026/2027)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap');
+
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #cbd5e1;
+            --primary-color: #4a90e2;
+            --blocked-color: #ffe6cc;
+            --blocked-text: #d97706;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.5rem;
+            color: #2c3e50;
+        }
+
+        .date-picker {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .date-picker input {
+            padding: 5px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: inherit;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .week-selector-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #edf2f7;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        select, input[type="text"], input[type="date"] {
+            padding: 6px 12px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            font-size: 0.85rem;
+            box-sizing: border-box;
+            font-family: inherit;
+            background: #f8fafc;
+            width: 100%;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #ffffff;
+        }
+
+        /* Search Bar Styling */
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .search-container input {
+            width: 200px;
+            padding-left: 30px;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+            margin-top: 5px;
+        }
+        .search-result-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+        }
+        .search-result-item:hover { background: #f8fafc; }
+        .search-result-title { font-size: 0.8rem; font-weight: bold; color: var(--primary-color); }
+        .search-result-text { font-size: 0.85rem; color: #333; }
+
+        .btn {
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .btn-export { background-color: #28a745; }
+        .btn-export:hover { background-color: #218838; }
+        
+        .btn-print { background-color: #6c757d; }
+        .btn-print:hover { background-color: #5a6268; }
+
+        .btn-split { background-color: #17a2b8; }
+        .btn-split:hover { background-color: #138496; }
+
+        .btn-backup { background-color: #6f42c1; }
+        .btn-backup:hover { background-color: #59339d; }
+
+        .btn-restore { background-color: #e83e8c; }
+        .btn-restore:hover { background-color: #c73277; }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0 4px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .icon-btn:hover { opacity: 1; }
+
+        .week-badge {
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 15px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            margin-left: 10px;
+        }
+
+        .badge-a { background-color: #e1f5fe; color: #0288d1; }
+        .badge-b { background-color: #ede7f6; color: #5e35b1; }
+
+        .workspace {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .grid-wrapper {
+            flex: 1;
+            min-width: 0; 
+        }
+
+        .grid-title {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .timetable {
+            display: grid;
+            grid-template-columns: 90px repeat(5, 1fr);
+            gap: 8px;
+            background: transparent;
+        }
+
+        .header-cell {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .day-col {
+            background: #34495e;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold;
+            border-radius: 5px;
+            min-height: 120px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        
+        .day-col:hover { opacity: 0.85; }
+
+        .cell {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cell-header {
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 5px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .cell-actions { display: flex; gap: 2px; }
+
+        .btn-clear {
+            background: transparent;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 0 4px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .btn-clear:hover { opacity: 1; }
+
+        .cell-body {
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-grow: 1;
+        }
+
+        .cell textarea {
+            width: 100%;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 5px;
+            font-size: 0.8rem;
+            box-sizing: border-box;
+            font-family: inherit;
+            background: #f8fafc;
+            resize: none;
+            height: 45px;
+            flex-grow: 1;
+        }
+
+        .cell textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #ffffff;
+        }
+
+        .ppa-cell {
+            padding: 0;
+            border: none;
+            background: transparent;
+        }
+
+        .ppa-textarea {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            resize: none;
+            border-radius: 6px;
+            padding: 15px 10px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            background-color: var(--blocked-color);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.6) 10px, rgba(255,255,255,0.6) 20px);
+            transition: all 0.2s ease;
+        }
+
+        .ppa-textarea::placeholder {
+            color: var(--blocked-text);
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .ppa-textarea:focus, .ppa-textarea.has-content {
+            background: #fef08a;
+            background-image: none;
+            color: #333;
+        }
+
+        .ppa-textarea:focus::placeholder, .ppa-textarea.has-content::placeholder {
+            color: #a16207; 
+            font-weight: normal;
+            text-align: left;
+        }
+
+        .read-only input, .read-only textarea, .read-only select {
+            background: #e9ecef;
+            color: #6c757d;
+            border-color: transparent;
+        }
+        .read-only .btn-clear, .read-only .icon-btn { display: none; }
+        .read-only .ppa-textarea:focus { background-color: var(--blocked-color); }
+
+        .cell.blocked {
+            background-color: var(--blocked-color);
+            background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.6) 10px, rgba(255,255,255,0.6) 20px);
+            color: var(--blocked-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-align: center;
+            border: 1px solid #ffd8a8;
+        }
+
+        .form-textarea {
+            width: 85%;
+            margin-top: 5px;
+            height: 55px;
+            font-size: 0.75rem;
+            padding: 5px;
+        }
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #ffffff;
+        }
+
+        .screen-only { display: block; }
+        .print-only { display: none; }
+
+        .markdown-preview { 
+            flex-grow: 1; 
+            padding: 6px; 
+            background: #f8fafc; 
+            border: 1px solid transparent; 
+            border-radius: 4px; 
+            cursor: text; 
+            overflow-y: auto; 
+            height: 45px; 
+            box-sizing: border-box; 
+            
+            /* Handwritten Styling */
+            font-family: 'Caveat', cursive;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #dc3545; /* Teacher Red */
+            line-height: 1.1; 
+        }
+        .markdown-preview:hover { border-color: #e2e8f0; }
+        .markdown-preview ul { margin: 0; padding-left: 15px; margin-bottom: 4px; }
+        .markdown-preview li { margin-bottom: 2px; }
+        .markdown-preview strong { color: #991b1b; font-weight: 700; } 
+        
+        .ppa-textarea.markdown-preview { padding: 15px 10px; height: 100%; display: flex; flex-direction: column; }
+        .ppa-textarea.markdown-preview ul { margin-top: 5px; }
+
+        .task-boxes-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .task-box {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .task-header { 
+            font-weight: bold; 
+            color: #2c3e50; 
+            font-size: 1.1rem; 
+            border-bottom: 2px solid var(--primary-color); 
+            padding-bottom: 5px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            flex-grow: 1;
+            min-height: 80px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .task-item { 
+            display: flex; 
+            gap: 8px; 
+            align-items: flex-start; 
+            background: #f8fafc; 
+            padding: 6px 8px; 
+            border-radius: 5px; 
+            border: 1px solid #e2e8f0; 
+            
+            /* Handwritten Styling */
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #dc3545; /* Teacher Red */
+            line-height: 1.1;
+        }
+        .task-item input[type="checkbox"] { margin-top: 5px; cursor: pointer; }
+        .task-item-text { flex: 1; word-break: break-word; }
+        .task-item.done .task-item-text { text-decoration: line-through; color: #94a3b8; }
+        
+        .task-input { 
+            width: 100%; 
+            padding: 8px; 
+            border: 1px solid var(--border-color); 
+            border-radius: 4px; 
+            font-size: 0.85rem; 
+            box-sizing: border-box; 
+            margin-top: 10px;
+        }
+
+        .del-task { color: #dc3545; cursor: pointer; font-weight: bold; background: none; border: none; font-size: 1rem; padding: 0 4px; opacity: 0.5; transition: 0.2s;}
+        .task-item:hover .del-task { opacity: 1; }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); display: none;
+            align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 25px; border-radius: 10px;
+            width: 380px; max-width: 90%; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .modal-content h3 { margin-top: 0; color: #2c3e50; font-size: 1.3rem; margin-bottom: 15px; }
+        .modal-options { margin: 20px 0; display: flex; flex-direction: column; gap: 12px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 25px; }
+        .btn-clear-note { background-color: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.2s; }
+        .modal-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; box-sizing: border-box; }
+
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            body { padding: 0; background: white; margin: 0;}
+            .controls, #prev-week-wrapper, .date-picker { display: none !important; }
+            header { box-shadow: none; padding: 0; margin-bottom: 2px; background: transparent; }
+            .header-left h1 { font-size: 1.1rem; margin: 0; padding: 0; }
+            .container { max-width: 100%; padding: 0; margin: 0; }
+            .workspace { display: block; }
+            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 0.9rem; }
+            
+            .screen-only { display: none !important; }
+            .print-only { display: block !important; }
+
+            /* Highly compact grid */
+            .timetable { grid-template-columns: 50px repeat(5, 1fr); gap: 1px; }
+
+            .header-cell { padding: 1px; font-size: 0.65rem; border: 1px solid #000 !important; }
+            .day-col { min-height: auto; padding: 1px 0; font-size: 0.65rem; border: 1px solid #000 !important; }
+            
+            /* Print Monday Quote nicely */
+            .monday-row { 
+                display: flex !important; 
+                min-height: 25px !important; 
+                height: 25px !important; 
+                padding: 0 !important; 
+                align-items: center; 
+                justify-content: center; 
+                border: 1px solid #000 !important;
+            }
+
+            .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; }
+            .cell-header { border-bottom: 1px solid #000 !important; padding: 0px 2px; font-size: 0.55rem; }
+            .cell-body { padding: 1px; gap: 0px; }
+
+            .cell textarea { height: 16px; font-size: 0.6rem; padding: 0; margin: 0; }
+            .cell select { font-size: 0.55rem; padding: 0; height: 12px; margin: 0; }
+            .ppa-textarea { padding: 1px; font-size: 0.6rem; }
+            .cell input, .cell textarea, .cell select, .ppa-textarea { border: none; background: transparent; }
+            
+            /* Print Task Boxes Compactly */
+            .task-boxes-container { display: flex !important; gap: 3px !important; margin-top: 3px !important; page-break-inside: avoid; }
+            .task-box { padding: 2px !important; border: 1px solid #000 !important; border-radius: 0 !important; box-shadow: none !important; }
+            .task-header { font-size: 0.65rem !important; margin-bottom: 1px !important; padding-bottom: 1px !important; border-bottom: 1px solid #000 !important; }
+            .task-list { min-height: 0 !important; max-height: none !important; gap: 1px !important; }
+            .task-item { padding: 0 !important; border: none !important; background: transparent !important; font-size: 0.7rem !important; margin-bottom: 0 !important; line-height: 1 !important; color: #dc3545 !important; }
+            .task-input, .del-task { display: none !important; }
+            .markdown-preview { padding: 0 !important; font-size: 0.65rem !important; line-height: 1 !important; color: #dc3545 !important; height: auto !important; }
+            
+            @page { size: landscape; margin: 0.4cm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <h1>Mr Reeve's Requisitions</h1>
+            <div class="date-picker">
+                <label for="week-date">Week Commencing:</label>
+                <input type="date" id="week-date" onchange="saveDate(this.value)">
+                <span id="week-type-display" class="week-badge badge-a">Week A</span>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <!-- Global Search Bar -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="search-input" placeholder="Search topics/notes..." oninput="handleSearch(event)">
+                <div id="search-results" class="search-results"></div>
+            </div>
+
+            <div class="week-selector-container">
+                <label for="week-select"><strong>Go to Week:</strong></label>
+                <select id="week-select" onchange="changeWeek(this.value)"></select>
+            </div>
+            <button class="btn btn-split" onclick="toggleSplitView()">🌗 Toggle Split View</button>
+            <button class="btn btn-backup" onclick="downloadBackup()">📥 Backup Data</button>
+            <button class="btn btn-restore" onclick="document.getElementById('file-upload').click()">📤 Restore</button>
+            <input type="file" id="file-upload" style="display:none;" accept=".json" onchange="restoreBackup(event)">
+            
+            <button class="btn btn-print" onclick="window.print()">🖨️ Print Week</button>
+            <button class="btn btn-print" onclick="printRange()">🖨️ Print Range</button>
+            <button class="btn btn-export" onclick="exportToCSV()">💾 Export CSV</button>
+        </div>
+    </header>
+
+    <div class="workspace" id="workspace">
+        <div class="grid-wrapper" id="prev-week-wrapper" style="display: none;">
+            <div class="grid-title" id="prev-title">Previous Week</div>
+            <div class="timetable" id="timetable-prev"></div>
+        </div>
+        
+        <div class="grid-wrapper" id="current-week-wrapper">
+            <div class="grid-title" id="curr-title" style="display: none;">Current Week</div>
+            <div class="timetable" id="timetable-curr"></div>
+        </div>
+    </div>
+
+    <div class="task-boxes-container" id="task-boxes">
+        <div class="task-box">
+            <div class="task-header">To Do List 📌</div>
+            <div class="task-list" id="list-todo"></div>
+            <input type="text" class="task-input" placeholder="+ Add task & press Enter..." onkeydown="addTask('todo', event)">
+        </div>
+        <div class="task-box">
+            <div class="task-header">To Mark 📚</div>
+            <div class="task-list" id="list-tomark"></div>
+            <input type="text" class="task-input" placeholder="+ Add task & press Enter..." onkeydown="addTask('tomark', event)">
+        </div>
+        <div class="task-box">
+            <div class="task-header">To Set 🎯</div>
+            <div class="task-list" id="list-toset"></div>
+            <input type="text" class="task-input" placeholder="+ Add task & press Enter..." onkeydown="addTask('toset', event)">
+        </div>
+    </div>
+</div>
+
+<div id="day-note-modal" class="modal-overlay">
+    <div class="modal-content">
+        <h3 id="modal-day-title">Set Note</h3>
+        <input type="text" id="modal-note-text" class="modal-input" placeholder="e.g., PD Day, Half Day, Field Trip...">
+        <div class="modal-options">
+            <label><input type="radio" name="note-type" value="full" checked> Whole Day (Periods 1-5)</label>
+            <label><input type="radio" name="note-type" value="pm"> Afternoon Only (Periods 4-5)</label>
+            <label><input type="radio" name="note-type" value="form"> 13A Form / Day Note (Does not block lessons)</label>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-export" onclick="saveDayNote()">Save Note</button>
+            <button class="btn btn-clear-note" onclick="clearDayNote()">Clear Note</button>
+            <button class="btn btn-print" onclick="closeDayNoteModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="custom-dialog-modal" class="modal-overlay">
+    <div class="modal-content" style="width: 320px; text-align: center;">
+        <h3 id="dialog-title">Notice</h3>
+        <p id="dialog-message" style="margin-bottom: 25px; font-size: 1rem; color: #444;"></p>
+        <div class="modal-actions" style="justify-content: center; margin-top: 0;" id="dialog-actions">
+            <button class="btn btn-export" id="dialog-btn-ok">OK</button>
+            <button class="btn btn-print" id="dialog-btn-cancel" style="display:none;">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    const periods = ['P1', 'P2', 'P3', 'P4', 'P5'];
+    const groupsList = ['13BC', '12BD', '12B2', '11XT1', '11X2C', '11YT1', '11Y2C', '10Y3', '9X2C120', '9X2', '8X2', '7Y3', '7Y3C120', '7Y6', '7X2', '7X2 C120', 'Collab'];
+
+    const mondayQuotes = [
+        "Teaching is the greatest act of optimism. – Colleen Wilcox",
+        "Science is a way of thinking much more than it is a body of knowledge. – Carl Sagan",
+        "The science technician: the unsung hero of the prep room.",
+        "Education is not the filling of a pail, but the lighting of a fire. – W.B. Yeats",
+        "Every brilliant experiment begins with a well-prepped lab.",
+        "Teachers plant seeds of knowledge that grow forever.",
+        "Somewhere, something incredible is waiting to be known. – Carl Sagan",
+        "A good teacher can inspire hope, ignite the imagination, and instill a love of learning.",
+        "Behind every great science lesson is a technician who found the missing equipment.",
+        "The important thing is to not stop questioning. – Albert Einstein",
+        "Science technicians: making the magic happen behind the scenes.",
+        "Teaching is the one profession that creates all other professions.",
+        "Equipped with his five senses, man explores the universe around him and calls the adventure Science.",
+        "A technician's prep room is the engine room of the science department.",
+        "The beautiful thing about learning is that no one can take it away from you. – B.B. King",
+        "Nothing in life is to be feared, it is only to be understood. – Marie Curie",
+        "The best teachers teach from the heart, not from the book.",
+        "We are all scientists. We are all born with a sense of wonder.",
+        "Science is magic that works. – Kurt Vonnegut",
+        "Without science technicians, science teachers would just be talking in an empty room.",
+        "I touch the future. I teach. – Christa McAuliffe",
+        "Research is what I'm doing when I don't know what I'm doing. – Wernher von Braun",
+        "A teacher affects eternity; they can never tell where their influence stops.",
+        "To invent, you need a good imagination and a pile of junk. – Thomas Edison",
+        "Science is organized knowledge. Wisdom is organized life. – Immanuel Kant",
+        "The art of teaching is the art of assisting discovery. – Mark Van Doren",
+        "The prep room: where coffee is consumed and miracles are prepped.",
+        "Millions saw the apple fall, but Newton asked why. – Bernard Baruch",
+        "It is the supreme art of the teacher to awaken joy in creative expression and knowledge.",
+        "What we learn with pleasure we never forget. – Alfred Mercier",
+        "Science knows no country, because knowledge belongs to humanity. – Louis Pasteur",
+        "The best preparation for tomorrow is doing your best today.",
+        "Technicians do it with precision (and a lot of patience).",
+        "A person who never made a mistake never tried anything new. – Albert Einstein",
+        "In a world where you can be anything, be a scientist.",
+        "Teachers who love teaching, teach children to love learning.",
+        "The good thing about science is that it's true whether or not you believe in it. – Neil deGrasse Tyson",
+        "End of the year countdown: Keep calm and prep on."
+    ];
+
+    const scheduleA = {
+        'Monday':    ['Blocked', 'Blocked', 'Blocked', 'Blocked', 'Blocked'],
+        'Tuesday':   ['13BC', '8X2', '13BC', '10Y3', '7Y3'],
+        'Wednesday': ['12BD', '12BD', '11Y2C', '11X2C', 'Collab'],
+        'Thursday':  ['PPA', '11X2C', 'PPA', '12BD', '11XT1'], 
+        'Friday':    ['11XT1', '7X2', 'PPA', '9X2C120', '7X2 C120']
+    };
+
+    const scheduleB = {
+        'Monday':    ['Blocked', 'Blocked', 'Blocked', 'Blocked', 'Blocked'],
+        'Tuesday':   ['9X2C120', '7Y3C120', '13BC', '8X2', '10Y3'],
+        'Wednesday': ['13BC', '7X2', '9X2', '12B2', 'Collab'],
+        'Thursday':  ['11Y2C', '7X2', '7Y6', '11X2C', '11YT1'], 
+        'Friday':    ['10Y3', '11Y2C', '11XT1', 'PPA', '12BD']
+    };
+
+    let currentWeek = 1;
+    let splitViewActive = false;
+    
+    let plannerData = {};
+    try {
+        plannerData = JSON.parse(localStorage.getItem('planner_data_2627_v4')) || {};
+    } catch (e) {
+        plannerData = {};
+    }
+
+    function showDialog(message, isConfirm = false, callback = null) {
+        document.getElementById('dialog-message').innerText = message;
+        document.getElementById('custom-dialog-modal').style.display = 'flex';
+        
+        const okBtn = document.getElementById('dialog-btn-ok');
+        const cancelBtn = document.getElementById('dialog-btn-cancel');
+
+        const newOk = okBtn.cloneNode(true);
+        const newCancel = cancelBtn.cloneNode(true);
+        okBtn.parentNode.replaceChild(newOk, okBtn);
+        cancelBtn.parentNode.replaceChild(newCancel, cancelBtn);
+
+        if (isConfirm) {
+            newCancel.style.display = 'inline-block';
+            newOk.onclick = () => { document.getElementById('custom-dialog-modal').style.display = 'none'; if(callback) callback(true); };
+            newCancel.onclick = () => { document.getElementById('custom-dialog-modal').style.display = 'none'; if(callback) callback(false); };
+        } else {
+            newCancel.style.display = 'none';
+            newOk.onclick = () => { document.getElementById('custom-dialog-modal').style.display = 'none'; if(callback) callback(true); };
+        }
+    }
+
+    // Keyboard Nav
+    document.addEventListener('keydown', (e) => {
+        const activeTag = document.activeElement.tagName;
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag) || document.activeElement.isContentEditable) return;
+        
+        if (e.key === 'ArrowLeft' && currentWeek > 1) { 
+            document.getElementById('week-select').value = currentWeek - 1; 
+            changeWeek(currentWeek - 1); 
+        }
+        if (e.key === 'ArrowRight' && currentWeek < 38) { 
+            document.getElementById('week-select').value = currentWeek + 1; 
+            changeWeek(currentWeek + 1); 
+        }
+    });
+
+    // Clipboard
+    let plannerClipboard = null;
+    function copyCellData(w, d, p, event) {
+        event.stopPropagation();
+        const key = `W${w}_${d}_P${p}`;
+        plannerClipboard = plannerData[key] ? JSON.parse(JSON.stringify(plannerData[key])) : { topic: '', details: '' };
+        
+        const btn = event.target;
+        const oldText = btn.innerHTML;
+        btn.innerHTML = '✓';
+        setTimeout(() => btn.innerHTML = oldText, 1000);
+    }
+    
+    function pasteCellData(w, d, p, event) {
+        event.stopPropagation();
+        if (!plannerClipboard) { showDialog('Nothing copied yet! Click the copy button (📋) on another lesson first.'); return; }
+        const key = `W${w}_${d}_P${p}`;
+        plannerData[key] = JSON.parse(JSON.stringify(plannerClipboard));
+        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+        refreshViews();
+    }
+
+    // Global Search
+    function handleSearch(e) {
+        const query = e.target.value.toLowerCase().trim();
+        const resultsBox = document.getElementById('search-results');
+        resultsBox.innerHTML = '';
+        
+        if (query.length < 2) { resultsBox.style.display = 'none'; return; }
+        
+        let results = [];
+        for (let w = 1; w <= 38; w++) {
+            days.forEach(day => {
+                periods.forEach((p, pIdx) => {
+                    const key = `W${w}_${day}_P${pIdx}`;
+                    const data = plannerData[key];
+                    if (data && ((data.topic && data.topic.toLowerCase().includes(query)) || (data.details && data.details.toLowerCase().includes(query)))) {
+                        results.push({ week: w, day, period: pIdx, data });
+                    }
+                });
+            });
+        }
+        
+        if (results.length > 0) {
+            results.forEach(res => {
+                const item = document.createElement('div');
+                item.className = 'search-result-item';
+                item.innerHTML = `<div class="search-result-title">Week ${res.week} - ${res.day} P${res.period + 1}</div>
+                                  <div class="search-result-text"><strong>${res.data.topic || 'No Topic'}</strong>: ${res.data.details || ''}</div>`;
+                item.onclick = () => {
+                    resultsBox.style.display = 'none';
+                    document.getElementById('search-input').value = '';
+                    document.getElementById('week-select').value = res.week;
+                    changeWeek(res.week);
+                };
+                resultsBox.appendChild(item);
+            });
+            resultsBox.style.display = 'block';
+        } else {
+            resultsBox.innerHTML = '<div style="padding:15px; text-align:center; color:#64748b;">No results found.</div>';
+            resultsBox.style.display = 'block';
+        }
+    }
+    
+    document.addEventListener('click', (e) => {
+        if(!e.target.closest('.search-container')) document.getElementById('search-results').style.display = 'none';
+    });
+
+    const taskTypes = ['todo', 'tomark', 'toset'];
+
+    function renderTasks() {
+        taskTypes.forEach(type => {
+            const list = document.getElementById(`list-${type}`);
+            list.innerHTML = '';
+            const tasks = plannerData[`W${currentWeek}_tasks_${type}`] || [];
+            
+            if (tasks.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:#94a3b8; font-style:italic; font-family:sans-serif; font-size:0.8rem; margin-top:15px;">No items</div>';
+                return;
+            }
+
+            tasks.forEach((task, idx) => {
+                const item = document.createElement('div');
+                item.className = `task-item ${task.done ? 'done' : ''}`;
+                
+                const cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.checked = task.done;
+                cb.onchange = () => {
+                    plannerData[`W${currentWeek}_tasks_${type}`][idx].done = cb.checked;
+                    localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                    renderTasks();
+                };
+                
+                const text = document.createElement('div');
+                text.className = 'task-item-text';
+                text.innerText = task.text;
+                
+                const del = document.createElement('button');
+                del.className = 'del-task';
+                del.innerHTML = '✖';
+                del.title = "Delete";
+                del.onclick = () => {
+                    plannerData[`W${currentWeek}_tasks_${type}`].splice(idx, 1);
+                    localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                    renderTasks();
+                };
+                
+                item.appendChild(cb);
+                item.appendChild(text);
+                item.appendChild(del);
+                list.appendChild(item);
+            });
+        });
+    }
+    
+    function addTask(type, e) {
+        if(e.key === 'Enter') {
+            const val = e.target.value.trim();
+            if(val) {
+                if(!plannerData[`W${currentWeek}_tasks_${type}`]) plannerData[`W${currentWeek}_tasks_${type}`] = [];
+                plannerData[`W${currentWeek}_tasks_${type}`].push({text: val, done: false});
+                localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                e.target.value = '';
+                renderTasks();
+            }
+        }
+    }
+
+    function parseMarkdown(text, placeholder) {
+        if (!text) return `<span style="color:#94a3b8;font-style:italic;font-family:sans-serif;font-size:0.8rem;">${placeholder}</span>`;
+        let html = text.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        let lines = html.split('\n');
+        let inList = false;
+        let out = [];
+        lines.forEach(line => {
+            if (line.trim().startsWith('- ')) {
+                if (!inList) { out.push('<ul>'); inList = true; }
+                out.push(`<li>${line.trim().substring(2)}</li>`);
+            } else {
+                if (inList) { out.push('</ul>'); inList = false; }
+                if(line.trim() !== '') out.push(line + '<br>');
+            }
+        });
+        if (inList) out.push('</ul>');
+        return out.join('').replace(/(<br>)+$/g, '');
+    }
+
+    function populateSelect(selectEl, prefixes, count) {
+        selectEl.appendChild(new Option('Select Topic...', ''));
+        prefixes.forEach(pref => {
+            for (let i = 1; i <= count; i++) selectEl.appendChild(new Option(`${pref} ${i}`, `${pref} ${i}`));
+        });
+        ['MUT (mid unit test)', 'EOUT (end of unit test)', 'Mock week', 'Lesson cancelled', 'Custom / Other...'].forEach(opt => {
+            selectEl.appendChild(new Option(opt, opt));
+        });
+    }
+
+    function getYearColor(classCode) {
+        if (!classCode) return '#f1f5f9';
+        let code = classCode.toLowerCase();
+        if (code === 'collab') return '#fde047'; 
+        if (code.startsWith('13')) return '#f8bbd0'; 
+        if (code.startsWith('12')) return '#e1bee7'; 
+        if (code.startsWith('11')) return '#bbdefb'; 
+        if (code.startsWith('10')) return '#b2dfdb'; 
+        if (code.startsWith('9'))  return '#c8e6c9'; 
+        if (code.startsWith('8'))  return '#fff9c4'; 
+        if (code.startsWith('7'))  return '#ffe0b2'; 
+        return '#f1f5f9'; 
+    }
+
+    const selectEl = document.getElementById('week-select');
+    for (let i = 1; i <= 38; i++) {
+        let opt = document.createElement('option');
+        opt.value = i;
+        opt.innerText = `Week ${i} (${i % 2 !== 0 ? 'Week A' : 'Week B'})`;
+        selectEl.appendChild(opt);
+    }
+
+    function changeWeek(weekNum) {
+        currentWeek = parseInt(weekNum);
+        refreshViews();
+    }
+
+    function saveDate(val) {
+        plannerData[`W${currentWeek}_date`] = val;
+        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+    }
+
+    function handleInputChange(week, day, periodIndex, field, value) {
+        const dataKey = `W${week}_${day}_P${periodIndex}`;
+        if (!plannerData[dataKey]) plannerData[dataKey] = { topic: '', details: '' };
+        plannerData[dataKey][field] = value;
+        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+    }
+
+    function clearCell(week, day, periodIndex) {
+        showDialog('Clear this lesson data?', true, (confirmed) => {
+            if (confirmed) {
+                const dataKey = `W${week}_${day}_P${periodIndex}`;
+                if (plannerData[dataKey]) {
+                    plannerData[dataKey] = { topic: '', details: '' };
+                    localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                    refreshViews();
+                }
+            }
+        });
+    }
+
+    let activeNoteWeek = null;
+    let activeNoteDay = null;
+
+    function openDayNoteModal(week, day) {
+        activeNoteWeek = week;
+        activeNoteDay = day;
+        document.getElementById('modal-day-title').innerText = `Set Note for ${day} (Wk ${week})`;
+
+        const existingText = plannerData[`W${week}_${day}_note`] || '';
+        const existingType = plannerData[`W${week}_${day}_noteType`] || 'full';
+
+        document.getElementById('modal-note-text').value = existingText;
+        const typeRadio = document.querySelector(`input[name="note-type"][value="${existingType}"]`);
+        if(typeRadio) typeRadio.checked = true;
+
+        document.getElementById('day-note-modal').style.display = 'flex';
+        document.getElementById('modal-note-text').focus();
+    }
+
+    function closeDayNoteModal() { document.getElementById('day-note-modal').style.display = 'none'; }
+
+    function saveDayNote() {
+        const text = document.getElementById('modal-note-text').value.trim();
+        const type = document.querySelector('input[name="note-type"]:checked').value;
+
+        if (text || type === 'form') {
+            plannerData[`W${activeNoteWeek}_${activeNoteDay}_note`] = text;
+            plannerData[`W${activeNoteWeek}_${activeNoteDay}_noteType`] = type;
+        } else {
+            plannerData[`W${activeNoteWeek}_${activeNoteDay}_note`] = '';
+            plannerData[`W${activeNoteWeek}_${activeNoteDay}_noteType`] = 'full';
+        }
+        
+        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+        closeDayNoteModal();
+        refreshViews();
+    }
+
+    function clearDayNote() {
+        plannerData[`W${activeNoteWeek}_${activeNoteDay}_note`] = '';
+        plannerData[`W${activeNoteWeek}_${activeNoteDay}_noteType`] = 'full';
+        plannerData[`W${activeNoteWeek}_${activeNoteDay}_formDetails`] = '';
+        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+        closeDayNoteModal();
+        refreshViews();
+    }
+
+    function toggleSplitView() {
+        splitViewActive = !splitViewActive;
+        const prevWrapper = document.getElementById('prev-week-wrapper');
+        const currTitle = document.getElementById('curr-title');
+        
+        if (splitViewActive) { prevWrapper.style.display = 'block'; currTitle.style.display = 'block'; } 
+        else { prevWrapper.style.display = 'none'; currTitle.style.display = 'none'; }
+        refreshViews();
+    }
+
+    function refreshViews() {
+        const isWeekA = currentWeek % 2 !== 0;
+        const badge = document.getElementById('week-type-display');
+        badge.innerText = isWeekA ? 'Week A Rotation' : 'Week B Rotation';
+        badge.className = `week-badge ${isWeekA ? 'badge-a' : 'badge-b'}`;
+        document.getElementById('week-date').value = plannerData[`W${currentWeek}_date`] || '';
+
+        renderGrid('timetable-curr', currentWeek, false);
+        renderTasks(); 
+
+        if (splitViewActive) {
+            if (currentWeek > 1) {
+                document.getElementById('prev-title').innerText = `Week ${currentWeek - 1} (Read-Only)`;
+                renderGrid('timetable-prev', currentWeek - 1, true);
+            } else {
+                document.getElementById('prev-title').innerText = `No Previous Week`;
+                document.getElementById('timetable-prev').innerHTML = '<div style="padding:20px; text-align:center; grid-column: 1 / -1;">This is Week 1. Nothing to look back at!</div>';
+            }
+        }
+    }
+
+    function renderGrid(containerId, targetWeek, isReadOnly) {
+        const grid = document.getElementById(containerId);
+        if (!grid) return;
+        grid.innerHTML = ''; 
+
+        const isWeekA = targetWeek % 2 !== 0;
+        const activeSchedule = isWeekA ? scheduleA : scheduleB;
+
+        if (isReadOnly) grid.classList.add('read-only');
+        else grid.classList.remove('read-only');
+
+        grid.appendChild(createHeaderCell('Day \\ Per'));
+        periods.forEach(p => grid.appendChild(createHeaderCell(p)));
+
+        days.forEach(day => {
+            let dayCell = document.createElement('div');
+            dayCell.className = 'day-col';
+            if (day === 'Monday') dayCell.classList.add('monday-row'); 
+            
+            let dayNameDiv = document.createElement('div');
+            dayNameDiv.innerText = day;
+            dayCell.appendChild(dayNameDiv);
+            
+            if (!isReadOnly) {
+                dayCell.title = "Click to set a day note, afternoon note, or 13A Form details";
+                dayCell.onclick = () => openDayNoteModal(targetWeek, day);
+            }
+
+            const dayNote = plannerData[`W${targetWeek}_${day}_note`];
+            const noteType = plannerData[`W${targetWeek}_${day}_noteType`] || 'full';
+
+            if (noteType === 'form') {
+                let formNoteDiv = document.createElement('div');
+                formNoteDiv.style.fontSize = '0.85rem';
+                formNoteDiv.style.fontWeight = 'bold';
+                formNoteDiv.style.marginTop = '8px';
+                formNoteDiv.style.color = '#ffd8a8';
+                formNoteDiv.innerText = `13A`;
+                dayCell.appendChild(formNoteDiv);
+
+                let formTextarea = document.createElement('textarea');
+                formTextarea.className = 'form-textarea';
+                formTextarea.placeholder = 'Details...';
+                formTextarea.value = plannerData[`W${targetWeek}_${day}_formDetails`] || '';
+                
+                if (isReadOnly) formTextarea.readOnly = true;
+                else {
+                    formTextarea.onclick = (e) => e.stopPropagation(); 
+                    formTextarea.oninput = (e) => {
+                        plannerData[`W${targetWeek}_${day}_formDetails`] = e.target.value;
+                        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                    };
+                }
+                dayCell.appendChild(formTextarea);
+            }
+            
+            grid.appendChild(dayCell);
+
+            if (dayNote && dayNote.trim() !== '' && noteType === 'full') {
+                let cell = document.createElement('div');
+                cell.className = 'cell blocked';
+                cell.style.gridColumn = 'span 5'; 
+                cell.style.fontSize = '1.2rem';
+                cell.style.letterSpacing = '1px';
+                cell.innerText = dayNote;
+
+                if (!isReadOnly) {
+                    let clearBtn = document.createElement('button');
+                    clearBtn.className = 'btn-clear';
+                    clearBtn.innerHTML = '✖';
+                    clearBtn.style.position = 'absolute';
+                    clearBtn.style.top = '10px';
+                    clearBtn.style.right = '10px';
+                    clearBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        plannerData[`W${targetWeek}_${day}_note`] = '';
+                        plannerData[`W${targetWeek}_${day}_noteType`] = 'full';
+                        localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                        refreshViews();
+                    };
+                    cell.appendChild(clearBtn);
+                }
+                grid.appendChild(cell);
+            } else {
+                periods.forEach((periodLabel, pIdx) => {
+                    if (dayNote && dayNote.trim() !== '' && noteType === 'pm' && pIdx >= 3) {
+                        if (pIdx === 3) {
+                            let cell = document.createElement('div');
+                            cell.className = 'cell blocked';
+                            cell.style.gridColumn = 'span 2'; 
+                            cell.style.fontSize = '1.1rem';
+                            cell.style.letterSpacing = '1px';
+                            cell.innerText = dayNote + " (PM)";
+
+                            if (!isReadOnly) {
+                                let clearBtn = document.createElement('button');
+                                clearBtn.className = 'btn-clear';
+                                clearBtn.innerHTML = '✖';
+                                clearBtn.style.position = 'absolute';
+                                clearBtn.style.top = '10px';
+                                clearBtn.style.right = '10px';
+                                clearBtn.onclick = (e) => {
+                                    e.stopPropagation();
+                                    plannerData[`W${targetWeek}_${day}_note`] = '';
+                                    plannerData[`W${targetWeek}_${day}_noteType`] = 'full';
+                                    localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                                    refreshViews();
+                                };
+                                cell.appendChild(clearBtn);
+                            }
+                            grid.appendChild(cell);
+                        }
+                        return; 
+                    }
+
+                    const classCode = activeSchedule[day][pIdx] || '';
+                    const dataKey = `W${targetWeek}_${day}_P${pIdx}`;
+                    const savedValue = plannerData[dataKey] || { topic: '', details: '' };
+
+                    let cell = document.createElement('div');
+
+                    if (day === 'Monday') {
+                        if (pIdx === 0) {
+                            cell.className = 'cell blocked monday-row'; 
+                            cell.style.gridColumn = 'span 5'; 
+                            
+                            const quoteIndex = (targetWeek - 1) % mondayQuotes.length;
+                            const currentQuote = mondayQuotes[quoteIndex];
+
+                            cell.innerHTML = `
+                                <span class="screen-only">Non-Working Day</span>
+                                <span class="print-only" style="font-family: 'Caveat', cursive; font-size: 1.1rem; color: #2c3e50;">
+                                    "${currentQuote}"
+                                </span>
+                            `;
+                            grid.appendChild(cell);
+                        }
+                        return; // Skip rendering the other 4 standard periods for Monday since the above spans 5 columns
+                    } else if (classCode === 'PPA') {
+                        cell.className = 'cell ppa-cell';
+                        
+                        let ppaContainer = document.createElement('div');
+                        ppaContainer.style.width = '100%'; 
+                        ppaContainer.style.height = '100%';
+                        
+                        let ppaInput = document.createElement('textarea');
+                        ppaInput.className = 'ppa-textarea';
+                        ppaInput.value = savedValue.details || '';
+                        ppaInput.style.display = 'none'; 
+                        
+                        let ppaPreview = document.createElement('div');
+                        ppaPreview.className = 'ppa-textarea markdown-preview';
+                        if (savedValue.details && savedValue.details.trim() !== '') ppaPreview.classList.add('has-content');
+                        ppaPreview.innerHTML = parseMarkdown(savedValue.details, "PPA - Personal Planning<br><br>(Click to plan)");
+
+                        if (isReadOnly) {
+                            ppaPreview.style.cursor = 'default';
+                        } else {
+                            ppaPreview.onclick = () => {
+                                ppaPreview.style.display = 'none';
+                                ppaInput.style.display = 'block';
+                                ppaInput.focus();
+                            };
+                            ppaInput.onblur = () => {
+                                ppaInput.style.display = 'none';
+                                ppaPreview.innerHTML = parseMarkdown(ppaInput.value, "PPA - Personal Planning<br><br>(Click to plan)");
+                                if (ppaInput.value.trim() !== '') ppaPreview.classList.add('has-content');
+                                else ppaPreview.classList.remove('has-content');
+                                ppaPreview.style.display = 'block';
+                            };
+                            ppaInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'details', e.target.value);
+                        }
+                        
+                        ppaContainer.appendChild(ppaPreview);
+                        ppaContainer.appendChild(ppaInput);
+                        cell.appendChild(ppaContainer);
+
+                    } else {
+                        cell.className = 'cell';
+                        
+                        let cellHeader = document.createElement('div');
+                        cellHeader.className = 'cell-header';
+                        cellHeader.style.backgroundColor = getYearColor(classCode);
+                        
+                        let titleSpan = document.createElement('span');
+                        titleSpan.innerText = classCode.toLowerCase() === 'collab' ? 'Collab Plan' : `Cl: ${classCode}`;
+                        
+                        let actionDiv = document.createElement('div');
+                        actionDiv.className = 'cell-actions';
+                        
+                        if (!isReadOnly) {
+                            let copyBtn = document.createElement('button');
+                            copyBtn.className = 'icon-btn';
+                            copyBtn.innerHTML = '📋';
+                            copyBtn.title = 'Copy Lesson';
+                            copyBtn.onclick = (e) => copyCellData(targetWeek, day, pIdx, e);
+                            
+                            let pasteBtn = document.createElement('button');
+                            pasteBtn.className = 'icon-btn';
+                            pasteBtn.innerHTML = '📥';
+                            pasteBtn.title = 'Paste Lesson';
+                            pasteBtn.onclick = (e) => pasteCellData(targetWeek, day, pIdx, e);
+                            
+                            let clearBtn = document.createElement('button');
+                            clearBtn.className = 'icon-btn btn-clear-cell';
+                            clearBtn.innerHTML = '✖';
+                            clearBtn.title = 'Clear';
+                            clearBtn.onclick = (e) => { e.stopPropagation(); clearCell(targetWeek, day, pIdx); };
+                            
+                            actionDiv.appendChild(copyBtn);
+                            actionDiv.appendChild(pasteBtn);
+                            actionDiv.appendChild(clearBtn);
+                        }
+
+                        cellHeader.appendChild(titleSpan);
+                        cellHeader.appendChild(actionDiv);
+
+                        let cellBody = document.createElement('div');
+                        cellBody.className = 'cell-body';
+                        
+                        let cLower = classCode.toLowerCase();
+                        
+                        let topicContainer = document.createElement('div');
+                        topicContainer.style.display = 'flex';
+                        topicContainer.style.flexDirection = 'column';
+                        topicContainer.style.gap = '5px';
+
+                        let topicSelect = document.createElement('select');
+                        let customInput = document.createElement('input');
+                        customInput.type = 'text';
+                        customInput.placeholder = 'Type custom topic...';
+                        customInput.style.display = 'none';
+
+                        let needsSelect = true;
+
+                        if (cLower.startsWith('7')) populateSelect(topicSelect, ['ATM', 'SHS', 'F&S', 'EE', 'ER', 'IOL'], 14);
+                        else if (cLower.startsWith('8')) populateSelect(topicSelect, ['ERP', 'PP', 'S&L', 'MTW', 'RR', 'BS'], 14);
+                        else if (cLower.startsWith('9')) populateSelect(topicSelect, ['Atmosphere', 'Atomic structure', 'Using resources', 'Bonding'], 15);
+                        else if (cLower.startsWith('10')) populateSelect(topicSelect, ['Infection', 'Bioenergetics', 'Ecology', 'Homeostasis'], 15);
+                        else if (cLower.startsWith('11')) populateSelect(topicSelect, ['Homeostasis', 'Inheritance', 'Skills'], 15);
+                        else { needsSelect = false; }
+
+                        let savedTopic = savedValue.topic || '';
+
+                        if (needsSelect) {
+                            if (isReadOnly) { topicSelect.disabled = true; customInput.readOnly = true; }
+
+                            let optionFound = false;
+                            for (let i = 0; i < topicSelect.options.length; i++) {
+                                if (topicSelect.options[i].value === savedTopic) { optionFound = true; break; }
+                            }
+
+                            if (savedTopic && !optionFound) {
+                                topicSelect.value = 'Custom / Other...';
+                                customInput.style.display = 'block';
+                                customInput.value = savedTopic;
+                            } else {
+                                topicSelect.value = savedTopic;
+                            }
+
+                            topicSelect.onchange = (e) => {
+                                if (e.target.value === 'Custom / Other...') {
+                                    customInput.style.display = 'block';
+                                    handleInputChange(targetWeek, day, pIdx, 'topic', customInput.value);
+                                } else {
+                                    customInput.style.display = 'none';
+                                    handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+                                }
+                            };
+                            customInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+
+                            topicContainer.appendChild(topicSelect);
+                            topicContainer.appendChild(customInput);
+                        } else {
+                            customInput.style.display = 'block';
+                            customInput.value = savedTopic;
+                            if (isReadOnly) customInput.readOnly = true;
+                            customInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+                            topicContainer.appendChild(customInput);
+                        }
+
+                        let detailsContainer = document.createElement('div');
+                        detailsContainer.style.display = 'flex';
+                        detailsContainer.style.flexDirection = 'column';
+                        detailsContainer.style.flexGrow = '1';
+
+                        let detailsInput = document.createElement('textarea');
+                        detailsInput.value = savedValue.details || '';
+                        detailsInput.style.display = 'none';
+                        
+                        let previewDiv = document.createElement('div');
+                        previewDiv.className = 'markdown-preview';
+                        previewDiv.innerHTML = parseMarkdown(savedValue.details, cLower === 'collab' ? 'Collab Planning (Click)' : 'Details...');
+
+                        if (isReadOnly) {
+                            previewDiv.style.cursor = 'default';
+                        } else {
+                            previewDiv.onclick = () => {
+                                previewDiv.style.display = 'none';
+                                detailsInput.style.display = 'block';
+                                detailsInput.focus();
+                            };
+                            detailsInput.onblur = () => {
+                                detailsInput.style.display = 'none';
+                                previewDiv.innerHTML = parseMarkdown(detailsInput.value, cLower === 'collab' ? 'Collab Planning (Click)' : 'Details...');
+                                previewDiv.style.display = 'block';
+                            };
+                            detailsInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'details', e.target.value);
+                        }
+
+                        detailsContainer.appendChild(previewDiv);
+                        detailsContainer.appendChild(detailsInput);
+                        
+                        cellBody.appendChild(topicContainer);
+                        cellBody.appendChild(detailsContainer);
+                        
+                        cell.appendChild(cellHeader);
+                        cell.appendChild(cellBody);
+                    }
+                    grid.appendChild(cell);
+                });
+            }
+        });
+    }
+
+    function createHeaderCell(text) {
+        let div = document.createElement('div');
+        div.className = 'header-cell';
+        div.innerText = text;
+        return div;
+    }
+
+    function printRange() {
+        showDialog("Range printing will print multiple pages. To keep it on one page, just use 'Print Week'.", false, () => {
+            let printInput = window.prompt("Enter the weeks you want to print (e.g., 1-5, or 1-38):", "1-5");
+            if (!printInput) return;
+
+            let start = 1, end = 1;
+            if (printInput.includes('-')) {
+                const parts = printInput.split('-');
+                start = parseInt(parts[0].trim());
+                end = parseInt(parts[1].trim());
+            } else {
+                start = parseInt(printInput.trim());
+                end = start;
+            }
+
+            if (isNaN(start) || isNaN(end) || start < 1 || end > 38 || start > end) {
+                showDialog("Invalid range. Please enter numbers between 1 and 38.");
+                return;
+            }
+
+            const workspace = document.getElementById('workspace');
+            const mainHeader = document.querySelector('header');
+            const taskboxes = document.getElementById('task-boxes');
+            const printContainer = document.createElement('div');
+            printContainer.id = 'print-batch-container';
+            
+            workspace.style.display = 'none';
+            mainHeader.style.display = 'none';
+            taskboxes.style.display = 'none';
+            document.body.appendChild(printContainer);
+
+            for (let w = start; w <= end; w++) {
+                const wrapper = document.createElement('div');
+                wrapper.style.pageBreakAfter = (w < end) ? 'always' : 'auto';
+                wrapper.style.marginBottom = '20px';
+
+                const title = document.createElement('div');
+                title.className = 'grid-title';
+                const weekDate = plannerData[`W${w}_date`] || '';
+                const dateText = weekDate ? ` (W/C: ${weekDate})` : '';
+                title.innerText = `Mr Reeve's Requisitions - Week ${w} - ${w % 2 !== 0 ? 'Week A' : 'Week B'}${dateText}`;
+
+                const gridContainer = document.createElement('div');
+                gridContainer.className = 'timetable';
+                gridContainer.id = `batch-grid-${w}`;
+
+                wrapper.appendChild(title);
+                wrapper.appendChild(gridContainer);
+                printContainer.appendChild(wrapper);
+
+                renderGrid(`batch-grid-${w}`, w, true); 
+            }
+
+            setTimeout(() => {
+                window.print();
+                printContainer.remove();
+                workspace.style.display = 'flex';
+                mainHeader.style.display = 'flex';
+                taskboxes.style.display = 'flex';
+            }, 500);
+        });
+    }
+
+    function downloadBackup() {
+        const dataStr = JSON.stringify(plannerData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `planner_backup_data.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function restoreBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (importedData) {
+                    plannerData = importedData;
+                    localStorage.setItem('planner_data_2627_v4', JSON.stringify(plannerData));
+                    showDialog("Backup restored successfully!");
+                    refreshViews();
+                }
+            } catch (err) {
+                showDialog("Error reading backup file. Please make sure it is a valid JSON file.");
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = ''; 
+    }
+
+    function exportToCSV() {
+        let groupLogs = {};
+        groupsList.forEach(g => groupLogs[g] = []);
+
+        for (let w = 1; w <= 38; w++) {
+            const isWeekA = w % 2 !== 0;
+            const activeSchedule = isWeekA ? scheduleA : scheduleB;
+            const weekDate = plannerData[`W${w}_date`] || `Wk ${w}`;
+
+            days.forEach(day => {
+                const dayNote = plannerData[`W${w}_${day}_note`];
+                const noteType = plannerData[`W${w}_${day}_noteType`] || 'full';
+                
+                periods.forEach((periodLabel, pIdx) => {
+                    const classCode = activeSchedule[day][pIdx];
+                    if (classCode && classCode !== 'Blocked' && classCode !== 'PPA' && groupsList.includes(classCode)) {
+                        const dataKey = `W${w}_${day}_P${pIdx}`;
+                        const lessonEntry = plannerData[dataKey] || { topic: '', details: '' };
+                        
+                        let logText = "";
+                        
+                        const isFullDayNote = dayNote && dayNote.trim() !== '' && noteType === 'full';
+                        const isPMNote = dayNote && dayNote.trim() !== '' && noteType === 'pm' && pIdx >= 3;
+
+                        if (isFullDayNote) {
+                            logText = `[${weekDate}] ${dayNote}`; 
+                        } else if (isPMNote) {
+                            logText = `[${weekDate}] ${dayNote} (PM)`;
+                        } else if (lessonEntry.topic || lessonEntry.details) {
+                            const cleanTopic = (lessonEntry.topic || 'Untitled').replace(/"/g, '""');
+                            const cleanDetails = (lessonEntry.details || 'No details').replace(/"/g, '""');
+                            logText = `[${weekDate}] ${cleanTopic}: ${cleanDetails}`;
+                        } else {
+                            logText = `[${weekDate}] [Unplanned]`;
+                        }
+                        groupLogs[classCode].push(logText);
+                    }
+                });
+            });
+        }
+
+        let maxRows = 0;
+        groupsList.forEach(g => {
+            if (groupLogs[g].length > maxRows) maxRows = groupLogs[g].length;
+        });
+
+        let csvContent = "";
+        csvContent += groupsList.map(g => `"${g}"`).join(",") + "\n";
+
+        for (let r = 0; r < maxRows; r++) {
+            let rowCells = [];
+            groupsList.forEach(g => {
+                let cellData = groupLogs[g][r] ? groupLogs[g][r] : "";
+                rowCells.push(`"${cellData}"`);
+            });
+            csvContent += rowCells.join(",") + "\n";
+        }
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "lesson_tracker_export.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    refreshViews();
+</script>
+
+</body>
+</html>
