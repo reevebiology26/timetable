@@ -495,58 +495,90 @@
         .modal-input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; box-sizing: border-box; }
 
         @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            body { padding: 0; background: white; margin: 0;}
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+            @page { size: A4 landscape; margin: 8mm; }
+            
+            html, body { 
+                height: 100% !important; 
+                width: 100% !important; 
+                margin: 0 !important; 
+                padding: 0 !important; 
+                overflow: hidden;
+            }
+
+            body { 
+                background: white; 
+                display: flex; 
+                flex-direction: column;
+            }
+
             .controls, #prev-week-wrapper, .date-picker { display: none !important; }
-            header { box-shadow: none; padding: 0; margin-bottom: 5px; background: transparent; }
-            .header-left h1 { font-size: 1.4rem; margin: 0; padding: 0; }
-            .container { max-width: 100%; padding: 0; margin: 0; }
-            .workspace { display: block; }
-            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 1.1rem; margin-bottom: 6px; }
+            header { display: none !important; }
+            
+            .container { 
+                padding: 0; margin: 0; max-width: 100%; 
+                height: 100%; 
+                display: flex; flex-direction: column; 
+                flex-grow: 1;
+            }
+            
+            .workspace { 
+                display: flex; flex-direction: column; 
+                flex-grow: 1; height: 100%;
+            }
+
+            #current-week-wrapper {
+                display: flex; flex-direction: column; 
+                flex-grow: 1; height: 100%;
+            }
+
+            .grid-title { display: block !important; text-align: left; margin-top: 0; font-size: 1.4rem; font-weight: bold; margin-bottom: 6px; flex-shrink: 0;}
             
             .screen-only { display: none !important; }
             .print-only { display: block !important; }
 
-            /* Balanced grid for readability */
-            .timetable { grid-template-columns: 70px repeat(5, 1fr); gap: 3px; }
+            .timetable { 
+                grid-template-columns: 70px repeat(5, 1fr) !important; 
+                grid-template-rows: auto repeat(5, 1fr) !important;
+                gap: 3px; 
+                flex-grow: 1;
+                height: 100% !important;
+                display: grid !important;
+            }
 
-            .header-cell { padding: 4px; font-size: 0.9rem; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
-            .day-col { min-height: auto; padding: 4px 0; font-size: 0.9rem; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
+            .header-cell { padding: 4px; font-size: 1.2rem !important; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
+            .day-col { min-height: auto; padding: 4px 0; font-size: 1.2rem !important; border: 1px solid #000 !important; background: #f8fafc !important; color: #000 !important;}
             
-            /* Print Monday Quote nicely */
             .monday-row { 
                 display: flex !important; 
-                min-height: 35px !important; 
-                height: 35px !important; 
+                height: 100% !important; 
                 padding: 0 !important; 
                 align-items: center; 
                 justify-content: center; 
                 border: 1px solid #000 !important;
             }
-            .monday-row .print-only { font-size: 1.3rem !important; }
+            
+            .monday-row-title { font-size: 1.4rem !important; margin-bottom: 5px !important; }
+            .monday-quote { font-size: 1.8rem !important; }
 
-            .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; }
-            .cell-header { border-bottom: 1px solid #000 !important; padding: 2px 4px; font-size: 0.8rem; font-weight: bold; }
-            .cell-body { padding: 4px; gap: 2px; }
+            .cell { border: 1px solid #000 !important; break-inside: avoid; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100%;}
+            .cell-header { border-bottom: 1px solid #000 !important; padding: 4px; font-size: 1.1rem !important; font-weight: bold; }
+            .cell-body { padding: 4px; gap: 2px; flex-grow: 1; height: 100%;}
 
-            .cell textarea { display: none !important; } /* Only print markdown preview */
+            .cell textarea { display: none !important; } 
             
-            /* Ensure dropdown/topic fields print nicely */
-            .cell select, .cell input { font-size: 0.85rem !important; font-weight: bold !important; padding: 0; margin: 0; height: auto; border: none !important; background: transparent !important; color: black !important; -webkit-appearance: none; appearance: none; }
+            .cell select, .cell input { font-size: 1.1rem !important; font-weight: bold !important; padding: 0; margin: 0; height: auto; border: none !important; background: transparent !important; color: black !important; -webkit-appearance: none; appearance: none; }
             
-            /* Allow preview boxes to fill space */
-            .markdown-preview { padding: 0 !important; font-size: 1rem !important; line-height: 1.2 !important; color: #dc3545 !important; height: auto !important; min-height: 50px; overflow: hidden; }
-            .ppa-textarea { padding: 4px !important; font-size: 1rem !important; min-height: 60px; border: none; background: transparent; overflow: hidden; }
+            .markdown-preview { padding: 0 !important; font-size: 1.4rem !important; line-height: 1.2 !important; color: #dc3545 !important; height: auto !important; min-height: 30px; overflow: hidden; flex-grow: 1;}
+            .ppa-textarea { padding: 4px !important; font-size: 1.4rem !important; min-height: 40px; border: none; background: transparent; overflow: hidden; line-height: 1.2 !important; color: #dc3545 !important; flex-grow: 1;}
             
-            /* Print Task Boxes readable size */
-            .task-boxes-container { display: flex !important; gap: 8px !important; margin-top: 10px !important; page-break-inside: avoid; }
-            .task-box { padding: 8px !important; border: 1px solid #000 !important; border-radius: 4px !important; box-shadow: none !important; flex: 1; }
-            .task-header { font-size: 1rem !important; margin-bottom: 4px !important; padding-bottom: 2px !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
-            .task-list { min-height: 0 !important; max-height: none !important; gap: 2px !important; }
-            .task-item { padding: 1px !important; border: none !important; background: transparent !important; font-size: 1.1rem !important; margin-bottom: 0 !important; line-height: 1.1 !important; color: #dc3545 !important; }
+            .task-boxes-container { display: flex !important; gap: 8px !important; margin-top: 10px !important; flex: 0 0 4.5cm !important; height: 4.5cm !important; }
+            .task-box { padding: 8px !important; border: 1px solid #000 !important; border-radius: 4px !important; box-shadow: none !important; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+            .task-header { font-size: 1.2rem !important; margin-bottom: 4px !important; padding-bottom: 2px !important; border-bottom: 1px solid #000 !important; color: #000 !important; }
+            .task-list { min-height: 0 !important; max-height: none !important; gap: 2px !important; flex-grow: 1;}
+            .task-item { padding: 2px !important; border: none !important; background: transparent !important; font-size: 1.4rem !important; margin-bottom: 0 !important; line-height: 1.1 !important; color: #dc3545 !important; }
+            .task-item-text { font-size: 1.4rem !important; }
             .task-input, .del-task { display: none !important; }
-            
-            @page { size: landscape; margin: 0.5cm; }
         }
     </style>
 </head>
@@ -1174,10 +1206,10 @@
                             cell.innerHTML = `
                                 <span class="screen-only">Non-Working Day</span>
                                 <div class="print-only" style="text-align: center;">
-                                    <div style="font-family: -apple-system, sans-serif; color: black; font-size: 1.1rem; text-decoration: underline; margin-bottom: 5px; font-weight: bold;">
+                                    <div class="monday-row-title" style="font-family: -apple-system, sans-serif; color: black; text-decoration: underline; margin-bottom: 5px; font-weight: bold;">
                                         Andy's helpful motivational quote of the week- as i am not in until Tuesday!
                                     </div>
-                                    <div style="font-family: 'Caveat', cursive; font-size: 1.4rem; color: #dc3545; font-weight: 700;">
+                                    <div class="monday-quote" style="font-family: 'Caveat', cursive; color: #dc3545; font-weight: 700;">
                                         "${currentQuote}"
                                     </div>
                                 </div>
@@ -1232,7 +1264,7 @@
                         cellHeader.style.backgroundColor = getYearColor(classCode);
                         
                         let titleSpan = document.createElement('span');
-                        titleSpan.innerText = classCode.toLowerCase() === 'collab' ? 'Collab Plan' : `Cl: ${classCode}`;
+                        titleSpan.innerText = classCode.toLowerCase() === 'collab' ? 'Collaborative Planning' : `Cl: ${classCode}`;
                         
                         let actionDiv = document.createElement('div');
                         actionDiv.className = 'cell-actions';
@@ -1269,101 +1301,174 @@
                         
                         let cLower = classCode.toLowerCase();
                         
-                        let topicContainer = document.createElement('div');
-                        topicContainer.style.display = 'flex';
-                        topicContainer.style.flexDirection = 'column';
-                        topicContainer.style.gap = '5px';
+                        if (cLower === 'collab') {
+                            let collabList = document.createElement('div');
+                            collabList.className = 'task-list';
+                            collabList.style.flexGrow = '1';
+                            collabList.style.minHeight = '40px';
+                            collabList.style.overflowY = 'auto';
 
-                        let topicSelect = document.createElement('select');
-                        let customInput = document.createElement('input');
-                        customInput.type = 'text';
-                        customInput.placeholder = 'Type custom topic...';
-                        customInput.style.display = 'none';
+                            let collabInput = document.createElement('input');
+                            collabInput.type = 'text';
+                            collabInput.className = 'task-input screen-only';
+                            collabInput.placeholder = '+ Add item & press Enter...';
 
-                        let needsSelect = true;
-
-                        if (cLower.startsWith('7')) populateSelect(topicSelect, ['ATM', 'SHS', 'F&S', 'EE', 'ER', 'IOL'], 14);
-                        else if (cLower.startsWith('8')) populateSelect(topicSelect, ['ERP', 'PP', 'S&L', 'MTW', 'RR', 'BS'], 14);
-                        else if (cLower.startsWith('9')) populateSelect(topicSelect, ['Atmosphere', 'Atomic structure', 'Using resources', 'Bonding'], 15);
-                        else if (cLower.startsWith('10')) populateSelect(topicSelect, ['Infection', 'Bioenergetics', 'Ecology', 'Homeostasis'], 15);
-                        else if (cLower.startsWith('11')) populateSelect(topicSelect, ['Homeostasis', 'Inheritance', 'Skills'], 15);
-                        else { needsSelect = false; }
-
-                        let savedTopic = savedValue.topic || '';
-
-                        if (needsSelect) {
-                            if (isReadOnly) { topicSelect.disabled = true; customInput.readOnly = true; }
-
-                            let optionFound = false;
-                            for (let i = 0; i < topicSelect.options.length; i++) {
-                                if (topicSelect.options[i].value === savedTopic) { optionFound = true; break; }
+                            let tasks = [];
+                            try {
+                                tasks = JSON.parse(savedValue.details || '[]');
+                                if (!Array.isArray(tasks)) tasks = savedValue.details ? [{text: savedValue.details, done: false}] : [];
+                            } catch(e) {
+                                tasks = savedValue.details ? [{text: savedValue.details, done: false}] : [];
                             }
 
-                            if (savedTopic && !optionFound) {
-                                topicSelect.value = 'Custom / Other...';
+                            const renderCollabTasks = () => {
+                                collabList.innerHTML = '';
+                                tasks.forEach((t, i) => {
+                                    let item = document.createElement('div');
+                                    item.className = 'task-item ' + (t.done ? 'done' : '');
+                                    item.style.padding = '4px 6px';
+                                    
+                                    let cb = document.createElement('input');
+                                    cb.type = 'checkbox';
+                                    cb.checked = t.done;
+                                    cb.className = 'screen-only';
+                                    if(isReadOnly) cb.disabled = true;
+                                    else cb.onchange = (e) => { t.done = e.target.checked; saveCollab(); };
+                                    
+                                    let textDiv = document.createElement('div');
+                                    textDiv.className = 'task-item-text';
+                                    textDiv.innerText = t.text;
+                                    
+                                    item.appendChild(cb);
+                                    item.appendChild(textDiv);
+                                    
+                                    if(!isReadOnly) {
+                                        let delBtn = document.createElement('button');
+                                        delBtn.className = 'del-task screen-only';
+                                        delBtn.innerHTML = '✖';
+                                        delBtn.onclick = () => { tasks.splice(i, 1); saveCollab(); };
+                                        item.appendChild(delBtn);
+                                    }
+                                    
+                                    collabList.appendChild(item);
+                                });
+                            };
+
+                            const saveCollab = () => {
+                                handleInputChange(targetWeek, day, pIdx, 'details', JSON.stringify(tasks));
+                                renderCollabTasks();
+                            };
+
+                            if(isReadOnly) { collabInput.style.display = 'none'; }
+                            else {
+                                collabInput.onkeydown = (e) => {
+                                    if (e.key === 'Enter' && e.target.value.trim() !== '') {
+                                        tasks.push({text: e.target.value.trim(), done: false});
+                                        e.target.value = '';
+                                        saveCollab();
+                                    }
+                                };
+                            }
+
+                            renderCollabTasks();
+                            cellBody.appendChild(collabList);
+                            cellBody.appendChild(collabInput);
+                            
+                        } else {
+                            let topicContainer = document.createElement('div');
+                            topicContainer.style.display = 'flex';
+                            topicContainer.style.flexDirection = 'column';
+                            topicContainer.style.gap = '5px';
+
+                            let topicSelect = document.createElement('select');
+                            let customInput = document.createElement('input');
+                            customInput.type = 'text';
+                            customInput.placeholder = 'Type custom topic...';
+                            customInput.style.display = 'none';
+
+                            let needsSelect = true;
+
+                            if (cLower.startsWith('7')) populateSelect(topicSelect, ['ATM', 'SHS', 'F&S', 'EE', 'ER', 'IOL'], 14);
+                            else if (cLower.startsWith('8')) populateSelect(topicSelect, ['ERP', 'PP', 'S&L', 'MTW', 'RR', 'BS'], 14);
+                            else if (cLower.startsWith('9')) populateSelect(topicSelect, ['Atmosphere', 'Atomic structure', 'Using resources', 'Bonding'], 15);
+                            else if (cLower.startsWith('10')) populateSelect(topicSelect, ['Infection', 'Bioenergetics', 'Ecology', 'Homeostasis'], 15);
+                            else if (cLower.startsWith('11')) populateSelect(topicSelect, ['Homeostasis', 'Inheritance', 'Skills'], 15);
+                            else { needsSelect = false; }
+
+                            let savedTopic = savedValue.topic || '';
+
+                            if (needsSelect) {
+                                if (isReadOnly) { topicSelect.disabled = true; customInput.readOnly = true; }
+
+                                let optionFound = false;
+                                for (let i = 0; i < topicSelect.options.length; i++) {
+                                    if (topicSelect.options[i].value === savedTopic) { optionFound = true; break; }
+                                }
+
+                                if (savedTopic && !optionFound) {
+                                    topicSelect.value = 'Custom / Other...';
+                                    customInput.style.display = 'block';
+                                    customInput.value = savedTopic;
+                                } else {
+                                    topicSelect.value = savedTopic;
+                                }
+
+                                topicSelect.onchange = (e) => {
+                                    if (e.target.value === 'Custom / Other...') {
+                                        customInput.style.display = 'block';
+                                        handleInputChange(targetWeek, day, pIdx, 'topic', customInput.value);
+                                    } else {
+                                        customInput.style.display = 'none';
+                                        handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+                                    }
+                                };
+                                customInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+
+                                topicContainer.appendChild(topicSelect);
+                                topicContainer.appendChild(customInput);
+                            } else {
                                 customInput.style.display = 'block';
                                 customInput.value = savedTopic;
-                            } else {
-                                topicSelect.value = savedTopic;
+                                if (isReadOnly) customInput.readOnly = true;
+                                customInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+                                topicContainer.appendChild(customInput);
                             }
 
-                            topicSelect.onchange = (e) => {
-                                if (e.target.value === 'Custom / Other...') {
-                                    customInput.style.display = 'block';
-                                    handleInputChange(targetWeek, day, pIdx, 'topic', customInput.value);
-                                } else {
-                                    customInput.style.display = 'none';
-                                    handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
-                                }
-                            };
-                            customInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
+                            let detailsContainer = document.createElement('div');
+                            detailsContainer.style.display = 'flex';
+                            detailsContainer.style.flexDirection = 'column';
+                            detailsContainer.style.flexGrow = '1';
 
-                            topicContainer.appendChild(topicSelect);
-                            topicContainer.appendChild(customInput);
-                        } else {
-                            customInput.style.display = 'block';
-                            customInput.value = savedTopic;
-                            if (isReadOnly) customInput.readOnly = true;
-                            customInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'topic', e.target.value);
-                            topicContainer.appendChild(customInput);
-                        }
+                            let detailsInput = document.createElement('textarea');
+                            detailsInput.value = savedValue.details || '';
+                            detailsInput.style.display = 'none';
+                            
+                            let previewDiv = document.createElement('div');
+                            previewDiv.className = 'markdown-preview';
+                            previewDiv.innerHTML = parseMarkdown(savedValue.details, 'Details...');
 
-                        let detailsContainer = document.createElement('div');
-                        detailsContainer.style.display = 'flex';
-                        detailsContainer.style.flexDirection = 'column';
-                        detailsContainer.style.flexGrow = '1';
+                            if (isReadOnly) {
+                                previewDiv.style.cursor = 'default';
+                            } else {
+                                previewDiv.onclick = () => {
+                                    previewDiv.style.display = 'none';
+                                    detailsInput.style.display = 'block';
+                                    detailsInput.focus();
+                                };
+                                detailsInput.onblur = () => {
+                                    detailsInput.style.display = 'none';
+                                    previewDiv.innerHTML = parseMarkdown(detailsInput.value, 'Details...');
+                                    previewDiv.style.display = 'block';
+                                };
+                                detailsInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'details', e.target.value);
+                            }
 
-                        let detailsInput = document.createElement('textarea');
-                        detailsInput.value = savedValue.details || '';
-                        detailsInput.style.display = 'none';
-                        
-                        let previewDiv = document.createElement('div');
-                        previewDiv.className = 'markdown-preview';
-                        previewDiv.innerHTML = parseMarkdown(savedValue.details, cLower === 'collab' ? 'Collab Planning (Click)' : 'Details...');
-
-                        if (isReadOnly) {
-                            previewDiv.style.cursor = 'default';
-                        } else {
-                            previewDiv.onclick = () => {
-                                previewDiv.style.display = 'none';
-                                detailsInput.style.display = 'block';
-                                detailsInput.focus();
-                            };
-                            detailsInput.onblur = () => {
-                                detailsInput.style.display = 'none';
-                                previewDiv.innerHTML = parseMarkdown(detailsInput.value, cLower === 'collab' ? 'Collab Planning (Click)' : 'Details...');
-                                previewDiv.style.display = 'block';
-                            };
-                            detailsInput.oninput = (e) => handleInputChange(targetWeek, day, pIdx, 'details', e.target.value);
-                        }
-
-                        detailsContainer.appendChild(previewDiv);
-                        detailsContainer.appendChild(detailsInput);
-                        
-                        if (cLower !== 'collab') {
+                            detailsContainer.appendChild(previewDiv);
+                            detailsContainer.appendChild(detailsInput);
+                            
                             cellBody.appendChild(topicContainer);
+                            cellBody.appendChild(detailsContainer);
                         }
-                        cellBody.appendChild(detailsContainer);
                         
                         cell.appendChild(cellHeader);
                         cell.appendChild(cellBody);
